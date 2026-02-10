@@ -22,6 +22,7 @@
     import { useUpdateEdgeData } from './utils/useUpdateEdgeData.svelte';
     import { Button } from '#components/base/index';
     import { useDeleteEdge } from '#components/utils/useDeleteEdge.svelte';
+    import { useDeleteNode } from '#components/utils/useDeleteNode.svelte';
     import { useGetNodesFromSource } from '#components/utils/useGetNodesFromSource.svelte';
     import { useGetNodeRelativePosition } from '#components/utils/useGetNodeRelativePosition.svelte';
     import { useCopyPasteHandler } from '#components/utils/useCopyPasteHandler.svelte';
@@ -237,6 +238,7 @@
     };
 
     const { deleteEdge } = useDeleteEdge();
+    const { deleteNode } = useDeleteNode();
 
 
     const onconnectstart = (event: any, node: any) => {
@@ -272,7 +274,43 @@
                 return edges.map(edge => ({ ...edge, selected: true }));
             });
         }
+
+        if ((e.key === 'Delete' || e.key === 'Backspace')) {
+            e.preventDefault();
+            const selectedEdges = store.getEdges().filter((e) => e.selected);
+            const selectedNodes = store.getNodes().filter((n) => n.selected);
+
+            if (selectedEdges.length > 0) {
+                selectedEdges.forEach((edge) => {
+                    if (edge.id === currentEdge?.id) {
+                        currentEdge = null;
+                        showEdgePanel = false;
+                    }
+                    deleteEdge(edge.id);
+                });
+            }
+
+            if (selectedNodes.length > 0) {
+                selectedNodes.forEach((node) => {
+                    deleteNode(node.id);
+                });
+            }
+
+            if (selectedEdges.length === 0 && !selectedNodes.length && currentEdge) {
+                deleteEdge(currentEdge.id);
+                currentEdge = null;
+                showEdgePanel = false;
+            }
+        }
     };
+
+    $effect(() => {
+        const selected = store.getEdges().find((e) => e.selected);
+        if (selected) {
+            currentEdge = selected;
+            showEdgePanel = true;
+        }
+    });
 
     const handleGlobalPaste = async (event: ClipboardEvent) => {
         // 只在“非输入态”下处理流程图粘贴

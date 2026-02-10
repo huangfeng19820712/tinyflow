@@ -29,6 +29,14 @@
         }
     }
     store.init((data as TinyflowData)?.nodes || [], (data as TinyflowData)?.edges || []);
+    const vp = (data as TinyflowData)?.viewport as any;
+    if (vp && typeof vp === 'object') {
+        store.setViewport({
+            x: vp.x ?? 250,
+            y: vp.y ?? 100,
+            zoom: vp.zoom ?? 1
+        });
+    }
     setContext('tinyflow_options', options);
 </script>
 
