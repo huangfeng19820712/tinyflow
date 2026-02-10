@@ -36,3 +36,5 @@ yarn-error.log*
 ossutil_output
 /docs/.vitepress/cache/
 /docs/.vitepress/dist/
+dist/
+**/dist/
