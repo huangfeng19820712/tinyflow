@@ -28,6 +28,7 @@
     import { useCopyPasteHandler } from '#components/utils/useCopyPasteHandler.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { isInEditableElement } from '#components/utils/isInEditableElement';
+    import ButtonEdge from './edges/ButtonEdge.svelte';
 
     const { onInit, ...rest } = $props();
     const svelteFlow = useSvelteFlow();
@@ -335,6 +336,10 @@
         // ...nodeTypes
     } as NodeTypes;
 
+    const edgeTypes = {
+        buttonEdge: ButtonEdge
+    } as any;
+
     const customNodes = getOptions().customNodes;
     if (customNodes) {
         for (let key of Object.keys(customNodes)) {
@@ -357,6 +362,7 @@
 
 <div style="position: relative; height: 100%; width: 100%;overflow: hidden">
     <SvelteFlow nodeTypes={{ ...nodeTypes, ...customNodeTypes}}
+                edgeTypes={edgeTypes}
                 bind:nodes={store.getNodes, store.setNodes}
                 bind:edges={store.getEdges, store.setEdges}
                 bind:viewport={store.getViewport, store.setViewport}
@@ -390,6 +396,7 @@
                      currentEdge = null;
                 }}
                 defaultEdgeOptions={{
+                    type: 'buttonEdge',
                     // animated: true,
                     // label: 'edge label',
                     markerEnd: {
